@@ -15,6 +15,9 @@
     <div class="col-md6 border rounded">
         <h4>{{topic.name}}</h4>
         <h6>{{topic.text}}</h6><br>
+        {% if current_user.is_authenticated %}
+            <a href="/subcategory/{{subcategory.name}}/topic/{{topic.name}}/message" class="btn btn-secondary">Добавить сообщение</a>
+        {% endif %}
         {% for j in message%}
         <div>
             {{j.author}}: {{j.text}} ({{j.time}})

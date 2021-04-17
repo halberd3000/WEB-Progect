@@ -20,4 +20,4 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     topic = orm.relation("Topic", back_populates='user')
-    messages = orm.relation("Message", back_populates='user')
+    message = orm.relation("Message", back_populates='user')

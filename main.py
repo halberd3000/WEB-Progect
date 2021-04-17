@@ -9,6 +9,7 @@ from data.subcategory import Subcategory
 from data.topic import Topic
 # from flask_ngrok import run_with_ngrok
 from data.user import User
+from forms.message import MessageForm
 from forms.topic import TopicForm
 from forms.user import RegisterForm
 from loginform import LoginForm
@@ -42,7 +43,7 @@ def topic_name(name, name1):
     subcategory = db_sess.query(Subcategory).filter(Subcategory.name == name).first()
     topic = db_sess.query(Topic).filter(Topic.subcategory_id == subcategory.id, Topic.name == name1).first()
     message = db_sess.query(Message).filter(Message.topic_id == topic.id)
-    return render_template("topic.html", topic=topic, message=message)
+    return render_template("topic.html", topic=topic, message=message, subcategory=subcategory)
 
 
 @app.route('/logout')
@@ -109,11 +110,30 @@ def add_topic(subc):
         topic.time = datetime.now()
         sc = db_sess.query(Subcategory).filter(Subcategory.name == subc).first()
         topic.subcategory_id = sc.id
+        topic.user = current_user
         current_user.topic.append(topic)
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect(f'/subcategory/{subc}')
     return render_template('add_topic.html', title='Добавление темы',
+                           form=form)
+
+
+@app.route('/subcategory/<subc>/topic/<topic>/message',  methods=['GET', 'POST'])
+@login_required
+def add_message(subc, topic):
+    form = MessageForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        message = Message()
+        message.text = form.text.data
+        message.time = datetime.now()
+        message.topic_id = db_sess.query(Topic).filter(Topic.name == topic).first().id
+        current_user.message.append(message)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect(f'/subcategory/{subc}/topic/{topic}')
+    return render_template('add_message.html', title='Добавление сообщения',
                            form=form)
 
 
