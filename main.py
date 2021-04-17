@@ -129,6 +129,7 @@ def add_message(subc, topic):
         message.text = form.text.data
         message.time = datetime.now()
         message.topic_id = db_sess.query(Topic).filter(Topic.name == topic).first().id
+        message.author = current_user
         current_user.message.append(message)
         db_sess.merge(current_user)
         db_sess.commit()
