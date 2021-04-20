@@ -43,6 +43,9 @@ def topic_name(name, name1):
     subcategory = db_sess.query(Subcategory).filter(Subcategory.name == name).first()
     topic = db_sess.query(Topic).filter(Topic.subcategory_id == subcategory.id, Topic.name == name1).first()
     message = db_sess.query(Message).filter(Message.topic_id == topic.id).all()
+    authors = {topic.creator: db_sess.query(User).filter(User.id == topic.creator).first().name}
+    for i in message:
+        authors[i.author] = db_sess.query(User).filter(User.id == i.author).first().name
     if request.method == "POST":
         for i in message:
             try:
@@ -52,7 +55,7 @@ def topic_name(name, name1):
             else:
                 i.like += 1
             db_sess.commit()
-    return render_template("topic.html", topic=topic, message=message, subcategory=subcategory)
+    return render_template("topic.html", topic=topic, message=message, subcategory=subcategory, authors=authors)
 
 
 @app.route('/logout')
