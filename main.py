@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request
 from flask_login import login_required, logout_user, login_user, LoginManager, current_user
 from future.backports.datetime import datetime
 
@@ -37,12 +37,21 @@ def subcategory_name(name):
     return render_template("subcategory.html", topic=topic, subcategory=subcategory)
 
 
-@app.route("/subcategory/<name>/topic/<name1>")
+@app.route("/subcategory/<name>/topic/<name1>", methods=['GET', 'POST'])
 def topic_name(name, name1):
     db_sess = db_session.create_session()
     subcategory = db_sess.query(Subcategory).filter(Subcategory.name == name).first()
     topic = db_sess.query(Topic).filter(Topic.subcategory_id == subcategory.id, Topic.name == name1).first()
-    message = db_sess.query(Message).filter(Message.topic_id == topic.id)
+    message = db_sess.query(Message).filter(Message.topic_id == topic.id).all()
+    if request.method == "POST":
+        for i in message:
+            try:
+                request.form[str(i.id)]
+            except Exception:
+                pass
+            else:
+                i.like += 1
+            db_sess.commit()
     return render_template("topic.html", topic=topic, message=message, subcategory=subcategory)
 
 

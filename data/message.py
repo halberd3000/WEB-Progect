@@ -10,6 +10,7 @@ class Message(SqlAlchemyBase):
     author = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("user.id"))
     text = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     time = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+    like = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     topic_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("topic.id"))
     topic = orm.relation('Topic')
     user = orm.relation('User')

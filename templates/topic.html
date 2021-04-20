@@ -20,7 +20,10 @@
         {% endif %}
         {% for j in message%}
         <div>
-            {{j.author}}: {{j.text}} ({{j.time}})
+            {{j.author}}: {{j.text}} ({{j.time}}) (Спасибо: {{j.like}})
+            <form method="post">
+                <input type="submit" name="{{ j.id }}" value="Спасибо" >
+            </form>
         </div>
         {% endfor %}
     </div>
